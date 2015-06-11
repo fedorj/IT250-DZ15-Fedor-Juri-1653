@@ -42,8 +42,8 @@ public class SobaDaoImpl implements SobaDao {
     }
 
     @Override
-    public void dodajIliUpdatujSobu(Soba soba) {
-        session.merge(soba);
+    public Soba dodajIliUpdatujSobu(Soba soba) {
+        return (Soba) session.merge(soba);
     }
 
 }
