@@ -22,5 +22,11 @@ public interface SobaDao {
 
     public void obrisiSobu(Integer id);
     
-    public void dodajIliUpdatujSobu(Soba soba);
+    public Soba dodajIliUpdatujSobu(Soba soba);
+    
+    public List<Soba> getListaSobaPoImenu(String ime);
+    
+    public abstract int allActiveSizeSobe();
+    
+    public abstract List<Soba> loadActiveFromTo(int from);
 }
