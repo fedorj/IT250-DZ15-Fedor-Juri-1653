@@ -11,12 +11,15 @@ import com.mycompany.methotels.services.ProtectedPage;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
-import org.apache.tapestry5.annotations.PageLoaded;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.hibernate.annotations.CommitAfter;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 
 /**
  *
@@ -29,46 +32,48 @@ public class DodavanjeSobe {
     @Persist
     @Property
     private Soba soba;
-    @Property
-    private Soba onesoba;
-
     @Inject
     private SobaDao sobaDao;
     @Property
+    private Soba onesoba;
+    @Property
     private List<Soba> sobe;
 
+    @InjectComponent
+    private Zone zoneSoba;
+    @InjectComponent
+    private Zone formZone;
+    @Inject
+    private Request request;
+    @Inject
+    private AjaxResponseRenderer ajaxResponseRenderer;
+
     void onActivate() {
-        if (sobe == null) {
-            sobe = new ArrayList<Soba>();
-        }
         sobe = sobaDao.getListaSvihSoba();
     }
 
     @CommitAfter
     Object onSuccess() {
         sobaDao.dodajIliUpdatujSobu(soba);
+        sobe = sobaDao.getListaSvihSoba();
         soba = new Soba();
-        return this;
+        if (request.isXHR()) {
+            ajaxResponseRenderer.addRender(zoneSoba).addRender(formZone);
+        }
+        return request.isXHR() ? zoneSoba.getBody() : null;
     }
 
     @CommitAfter
     Object onActionFromDelete(int id) {
         sobaDao.obrisiSobu(id);
-        return this;
+        sobe = sobaDao.getListaSvihSoba();
+        return request.isXHR() ? zoneSoba.getBody() : null;
     }
 
     @CommitAfter
     Object onActionFromEdit(Soba sobe) {
         soba = sobe;
-        return this;
-    }
-
-    public JSONObject getOptions() {
-        JSONObject json = new JSONObject();
-        json.put("bJQueryUI", "true");
-        json.put("bStateSave", true);
-        json.put("bAutoWidth", true);
-        return json;
+        return request.isXHR() ? zoneSoba.getBody() : null;
     }
 
 }
