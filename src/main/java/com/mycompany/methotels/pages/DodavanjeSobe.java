@@ -11,6 +11,7 @@ import com.mycompany.methotels.services.ProtectedPage;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -25,8 +26,7 @@ import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
  *
  * @author Fedor
  */
-@ProtectedPage
-@RolesAllowed(value = {"Korisnik"})
+@RequiresRoles("Admin")
 public class DodavanjeSobe {
 
     @Persist
